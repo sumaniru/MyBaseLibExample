@@ -8,7 +8,15 @@ package com.lhd.base.Net;
  * 描述:     TODO
  */
 
+import io.reactivex.Observable;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.POST;
+
 public interface Net {
 
+    @POST("weatherApi")
+    @FormUrlEncoded
+    Observable<String> getWeather(@Field("city") String city);
 
 }

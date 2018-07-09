@@ -29,7 +29,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 public class BaseRetrofitApi {
 
     private Retrofit retrofit;
-    public static volatile BaseRetrofitApi instance;
+    private static volatile BaseRetrofitApi instance;
 
     public static Retrofit getInstance() {
         if (instance == null) {

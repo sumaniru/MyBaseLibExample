@@ -2,6 +2,8 @@ package com.lhd.base.main;
 
 import android.app.Application;
 import android.content.Context;
+import android.support.multidex.MultiDex;
+import android.support.multidex.MultiDexApplication;
 
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.android.volley.RequestQueue;
@@ -16,7 +18,7 @@ import com.nostra13.universalimageloader.core.download.BaseImageDownloader;
 /**
  * Created by ywh on skit.
  */
-public class BaseApplication extends Application {
+public class BaseApplication extends MultiDexApplication {
 
     private static Context mContext;
     private static RequestQueue queues;
@@ -28,6 +30,12 @@ public class BaseApplication extends Application {
         mContext = this;
         queues = Volley.newRequestQueue(mContext);
         initImageLoader(mContext);
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(base);
     }
 
     public static Context getContext() {
