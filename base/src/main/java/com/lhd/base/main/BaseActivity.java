@@ -25,6 +25,8 @@ import com.lhd.base.R;
 import com.lhd.base.http.volley.MyNetRequest;
 import com.lhd.base.interfaces.GetContentViewId;
 import com.lhd.base.interfaces.PermissionResult;
+import com.lhd.base.mvp.BasePresenter;
+import com.lhd.base.mvp.BaseView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
@@ -34,7 +36,7 @@ import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
  * Created by mac on 17/12/8.
  */
 
-public abstract class BaseActivity extends AppCompatActivity implements GetContentViewId {
+public abstract class BaseActivity<P extends BasePresenter> extends AppCompatActivity implements GetContentViewId,BaseView {
 
     protected Activity context;
     protected ProgressDialog progressDialog;
