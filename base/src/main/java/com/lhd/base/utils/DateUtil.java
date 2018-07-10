@@ -1,4 +1,4 @@
-package com.lhd.base.tools;
+package com.lhd.base.utils;
 
 import android.util.Log;
 
@@ -13,7 +13,7 @@ import java.util.Locale;
  * Created by mcj on 2017/1/10.
  */
 
-public class DateTool {
+public class DateUtil {
 
     public static final String[] constellationArr = {"水瓶座", "双鱼座", "白羊座", "金牛座", "双子座", "巨蟹座", "狮子座", "处女座", "天秤座", "天蝎座", "射手座", "魔羯座"};
     public static final int[] constellationEdgeDay = {20, 19, 21, 21, 21, 22, 23, 23, 23, 23, 22, 22};

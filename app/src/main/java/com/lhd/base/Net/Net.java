@@ -8,6 +8,8 @@ package com.lhd.base.Net;
  * 描述:     TODO
  */
 
+import com.lhd.base.bean.WeatherBean;
+
 import io.reactivex.Observable;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -17,6 +19,6 @@ public interface Net {
 
     @POST("weatherApi")
     @FormUrlEncoded
-    Observable<String> getWeather(@Field("city") String city);
+    Observable<WeatherBean> getWeather(@Field("city") String city);
 
 }

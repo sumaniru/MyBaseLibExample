@@ -1,4 +1,4 @@
-package com.lhd.base.tools;
+package com.lhd.base.utils;
 
 import android.content.Context;
 import android.os.Environment;

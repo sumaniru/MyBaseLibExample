@@ -1,5 +1,6 @@
 package com.lhd.base.main;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.graphics.Bitmap;
@@ -11,35 +12,48 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.lhd.base.R;
+import com.lhd.base.http.retrofit.MyRetrofitRequest;
+import com.lhd.base.http.retrofit.exception.ApiException;
 import com.lhd.base.http.volley.MyNetRequest;
 import com.lhd.base.interfaces.GetContentViewId;
+import com.lhd.base.interfaces.RetrofitResponse;
+import com.lhd.base.mvp.BasePresenter;
+import com.lhd.base.mvp.BaseView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Predicate;
+import io.reactivex.schedulers.Schedulers;
+
 /**
  * Created by mac on 17/12/9.
  */
 
-public abstract class BaseFragment extends Fragment implements GetContentViewId {
+public abstract class BaseFragment<P extends BasePresenter> extends Fragment implements GetContentViewId, BaseView {
 
     protected Activity context;
-
     protected ProgressDialog progressDialog;
-
-    protected MyNetRequest request;
+    protected MyRetrofitRequest request;
     protected ImageLoader imageLoader;
     protected DisplayImageOptions options; // 设置图片显示相关参数
     protected View view;
+    protected P presenter;
 
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         context = getActivity();
-        request = new MyNetRequest();
+        request = new MyRetrofitRequest();
+        presenter = initPresenter();
     }
+
+    protected abstract P initPresenter();
 
     @Nullable
     @Override
@@ -54,6 +68,7 @@ public abstract class BaseFragment extends Fragment implements GetContentViewId 
     /**
      * 显示进度条
      */
+    @Override
     public void showProgress() {
         if (progressDialog == null) {
             progressDialog = new ProgressDialog(context);
@@ -67,7 +82,9 @@ public abstract class BaseFragment extends Fragment implements GetContentViewId 
     /**
      * 隐藏进度条
      */
-    public void hideProgress() {
+
+    @Override
+    public void cancelProgress() {
         if (progressDialog != null) {
             progressDialog.dismiss();
         }

@@ -1,4 +1,4 @@
-package com.lhd.base.tools;
+package com.lhd.base.utils;
 
 import android.Manifest;
 import android.app.Activity;
@@ -14,11 +14,11 @@ import com.lhd.base.data.OtherStatus;
  * Created by arutoria on 2017/7/1.
  */
 
-public class ChooseImgTools {
+public class ChooseImgUtil {
 
     private Activity context;
 
-    public ChooseImgTools(Activity context) {
+    public ChooseImgUtil(Activity context) {
         this.context = context;
     }
 

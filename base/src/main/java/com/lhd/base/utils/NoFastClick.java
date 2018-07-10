@@ -1,4 +1,4 @@
-package com.lhd.base.tools;
+package com.lhd.base.utils;
 
 /**
  * Created by mac on 18/1/24.

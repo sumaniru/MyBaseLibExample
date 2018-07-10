@@ -1,5 +1,6 @@
 package com.lhd.base.main;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
@@ -22,9 +23,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lhd.base.R;
+import com.lhd.base.http.retrofit.MyRetrofitRequest;
+import com.lhd.base.http.retrofit.exception.ApiException;
 import com.lhd.base.http.volley.MyNetRequest;
 import com.lhd.base.interfaces.GetContentViewId;
 import com.lhd.base.interfaces.PermissionResult;
+import com.lhd.base.interfaces.RetrofitResponse;
 import com.lhd.base.mvp.BasePresenter;
 import com.lhd.base.mvp.BaseView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -32,34 +36,59 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Predicate;
+import io.reactivex.schedulers.Schedulers;
+
 /**
  * Created by mac on 17/12/8.
  */
 
-public abstract class BaseActivity<P extends BasePresenter> extends AppCompatActivity implements GetContentViewId,BaseView {
+public abstract class BaseActivity<P extends BasePresenter> extends AppCompatActivity implements GetContentViewId, BaseView {
 
     protected Activity context;
     protected ProgressDialog progressDialog;
-    protected MyNetRequest request;
+    protected MyRetrofitRequest request;
     protected ImageLoader imageLoader;
     protected DisplayImageOptions options; // 设置图片显示相关参数
-    protected Toolbar toolbar;
-    protected TextView tv_title;
     private PermissionResult permissionInterface;
     protected final int PERMISSION_SUCCESS = 1001;
+    protected BasePresenter presenter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = this;
-        request = new MyNetRequest();
+        request = new MyRetrofitRequest();
         ActivityController.addActivity(this);
         getWindow().setBackgroundDrawable(null);
+        presenter = initPresenter();
         if (getLayoutId() != 0) {
             setContentView(getLayoutId());
-            initToolBar();
         }
     }
+
+    protected Toolbar initToolBar(String title, boolean isBack) {
+        return initToolBar(title, isBack, 0);
+    }
+
+    protected Toolbar initToolBar(String title, boolean isBack, int bgColor) {
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        TextView tv_title = findViewById(R.id.tv_title);
+        tv_title.setText(title);
+        setSupportActionBar(toolbar);
+        if (isBack) {
+            getSupportActionBar().setHomeButtonEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+        if (bgColor != 0) {
+            toolbar.setBackgroundColor(getResources().getColor(bgColor));
+        }
+        return toolbar;
+    }
+
 
     protected void setPermissionInterface(PermissionResult permissionInterface) {
         this.permissionInterface = permissionInterface;
@@ -96,14 +125,14 @@ public abstract class BaseActivity<P extends BasePresenter> extends AppCompatAct
         return super.onOptionsItemSelected(item);
     }
 
-    protected void initToolBar() {
-        toolbar = findViewById(R.id.toolbar);
-        tv_title = findViewById(R.id.tv_title);
-        if (toolbar != null) {
-            setSupportActionBar(toolbar);
-            toolbar.setNavigationIcon(R.mipmap.icon_back);
-        }
-    }
+//    protected void initToolBar() {
+//        toolbar = findViewById(R.id.toolbar);
+//        tv_title = findViewById(R.id.tv_title);
+//        if (toolbar != null) {
+//            setSupportActionBar(toolbar);
+//            toolbar.setNavigationIcon(R.mipmap.icon_back);
+//        }
+//    }
 
     protected void setStatusBar(int color, boolean isLight) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {//5.0及以上
@@ -155,9 +184,12 @@ public abstract class BaseActivity<P extends BasePresenter> extends AppCompatAct
                 .build(); // 构建完成
     }
 
+    protected abstract P initPresenter();
+
     /**
      * 显示进度条
      */
+    @Override
     public void showProgress() {
         if (progressDialog == null) {
             progressDialog = new ProgressDialog(this);
@@ -171,7 +203,8 @@ public abstract class BaseActivity<P extends BasePresenter> extends AppCompatAct
     /**
      * 隐藏进度条
      */
-    public void hideProgress() {
+    @Override
+    public void cancelProgress() {
         if (progressDialog != null) {
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -181,6 +214,7 @@ public abstract class BaseActivity<P extends BasePresenter> extends AppCompatAct
             }, 500);
         }
     }
+
 
     @Override
     protected void onDestroy() {

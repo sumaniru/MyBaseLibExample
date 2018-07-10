@@ -1,4 +1,4 @@
-package com.lhd.base.tools;
+package com.lhd.base.utils;
 
 import android.app.ActivityManager;
 import android.content.Context;

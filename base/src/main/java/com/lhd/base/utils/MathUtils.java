@@ -1,4 +1,4 @@
-package com.lhd.base.tools;
+package com.lhd.base.utils;
 /*
  * 项目名:    BlueToothTest
  * 包名       com.lhd.base.tools
